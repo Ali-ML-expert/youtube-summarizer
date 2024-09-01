@@ -1,0 +1,31 @@
+{% extends 'summarizer/base.html' %}
+
+{% block content %}
+<h2>Search Results for "{{ query }}"</h2>
+
+{% if summaries %}
+    {% for item in summaries %}
+        <div class="video-summary">
+            <h3>{{ item.video.title }}</h3>
+            {% if item.video.thumbnail %}
+                <img src="{{ item.video.thumbnail }}" alt="{{ item.video.title }}" class="video-thumbnail">
+            {% endif %}
+            <h4>Short Description:</h4>
+            <p>{{ item.summary.short_description }}</p>
+            <h4>Key Points:</h4>
+            <ul>
+            {% for point in item.summary.key_points %}
+                <li>{{ point }}</li>
+            {% endfor %}
+            </ul>
+            <h4>Full Summary:</h4>
+            <p>{{ item.summary.full_summary }}</p>
+            <a href="{{ item.video.url }}" target="_blank">Watch Video</a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No videos found.</p>
+{% endif %}
+
+<a href="{% url 'search' %}">New Search</a>
+{% endblock %}

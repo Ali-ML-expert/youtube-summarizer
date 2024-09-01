@@ -1,0 +1,20 @@
+{% extends 'summarizer/base.html' %}
+
+{% block title %}Summary History{% endblock %}
+
+{% block content %}
+<h2>Your Summary History</h2>
+{% if summaries %}
+    <ul>
+    {% for summary in summaries %}
+        <li>
+            <h3>{{ summary.video_title }}</h3>
+            <p>Summarized on: {{ summary.created_at }}</p>
+            <a href="{% url 'single_video_summary' %}?video_url={{ summary.video_url|urlencode }}">View Summary</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't summarized any videos yet.</p>
+{% endif %}
+{% endblock %}

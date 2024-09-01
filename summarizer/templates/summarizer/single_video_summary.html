@@ -1,0 +1,33 @@
+{% extends 'summarizer/base.html' %}
+
+{% block content %}
+<h2>Single Video Summary</h2>
+
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
+
+{% if not summary %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Summarize</button>
+    </form>
+{% else %}
+    <h3>{{ video.title }}</h3>
+    {% if video.thumbnail %}
+        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="video-thumbnail">
+    {% endif %}
+    <h4>Short Description:</h4>
+    <p>{{ summary.short_description }}</p>
+    <h4>Key Points:</h4>
+    <ul>
+    {% for point in summary.key_points %}
+        <li>{{ point }}</li>
+    {% endfor %}
+    </ul>
+    <h4>Full Summary:</h4>
+    <p>{{ summary.full_summary }}</p>
+    <a href="{% url 'single_video_summary' %}">Summarize Another Video</a>
+{% endif %}
+{% endblock %}
