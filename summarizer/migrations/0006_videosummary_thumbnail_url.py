@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summarizer', '0005_auto_20240901_0610'),
+        ("summarizer", "0005_auto_20240901_0610"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='videosummary',
-            name='thumbnail_url',
+            model_name="videosummary",
+            name="thumbnail_url",
             field=models.URLField(blank=True, null=True),
         ),
     ]

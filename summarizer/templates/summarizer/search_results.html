@@ -1,31 +1,41 @@
 {% extends 'summarizer/base.html' %}
 
 {% block content %}
-<h2>Search Results for "{{ query }}"</h2>
+<div class="container mt-5">
+    <h2>Search Results for "{{ query }}"</h2>
 
-{% if summaries %}
-    {% for item in summaries %}
-        <div class="video-summary">
-            <h3>{{ item.video.title }}</h3>
-            {% if item.video.thumbnail %}
-                <img src="{{ item.video.thumbnail }}" alt="{{ item.video.title }}" class="video-thumbnail">
-            {% endif %}
-            <h4>Short Description:</h4>
-            <p>{{ item.summary.short_description }}</p>
-            <h4>Key Points:</h4>
-            <ul>
-            {% for point in item.summary.key_points %}
-                <li>{{ point }}</li>
-            {% endfor %}
-            </ul>
-            <h4>Full Summary:</h4>
-            <p>{{ item.summary.full_summary }}</p>
-            <a href="{{ item.video.url }}" target="_blank">Watch Video</a>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No videos found.</p>
-{% endif %}
+    {% if summaries %}
+        {% for item in summaries %}
+            <div class="card mb-3">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        {% if item.video.thumbnail %}
+                            <img src="{{ item.video.thumbnail }}" class="card-img" alt="{{ item.video.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.video.title }}</h5>
+                            <h6>Short Description:</h6>
+                            <p class="card-text">{{ item.summary.short_description }}</p>
+                            <h6>Key Points:</h6>
+                            <ul>
+                                {% for point in item.summary.key_points %}
+                                    <li>{{ point }}</li>
+                                {% endfor %}
+                            </ul>
+                            <h6>Full Summary:</h6>
+                            <p class="card-text">{{ item.summary.full_summary }}</p>
+                            <a href="{{ item.video.url }}" target="_blank" class="btn btn-primary">Watch Video</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No videos found.</p>
+    {% endif %}
 
-<a href="{% url 'search' %}">New Search</a>
+    <a href="{% url 'search' %}" class="btn btn-secondary">New Search</a>
+</div>
 {% endblock %}

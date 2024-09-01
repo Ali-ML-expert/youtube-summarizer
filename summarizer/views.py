@@ -5,6 +5,7 @@ from .utils import get_video_info, generate_summary, summarize_search_results
 from .models import VideoSummary
 from .chroma_utils import store_video_data
 import logging
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +22,10 @@ def single_video_summary(request):
                 video_info = get_video_info(video_url)
                 logger.debug(f"Video info retrieved: {video_info}")
                 text_to_summarize = f"Title: {video_info['title']}\n\nDescription: {video_info['description']}"
+
                 summary = generate_summary(text_to_summarize)
                 logger.debug(f"Summary generated: {summary}")
-                
+
                 video_summary = VideoSummary.objects.create(
                     user=request.user,
                     video_url=video_url,
@@ -31,14 +33,17 @@ def single_video_summary(request):
                     summary=summary['full_summary'],
                     short_description=summary['short_description']
                 )
-                
+
                 store_video_data(video_summary)
-                
-                logger.debug(f"Rendering template with summary: {summary}")
-                return render(request, 'summarizer/single_video_summary.html', {'summary': summary, 'video': video_info})
+
+                logger.debug(f"Returning JSON response with summary: {summary}")
+                return JsonResponse({'success': True, 'summary': summary, 'video': video_info})
             except Exception as e:
                 logger.error(f"Error processing video {video_url}: {str(e)}", exc_info=True)
-                return render(request, 'summarizer/single_video_summary.html', {'form': form, 'error': str(e)})
+                return JsonResponse({'success': False, 'error': str(e)})
+        else:
+            logger.error("Invalid form data")
+            return JsonResponse({'success': False, 'error': 'Invalid form data'})
     else:
         form = SingleVideoForm()
     return render(request, 'summarizer/single_video_summary.html', {'form': form})

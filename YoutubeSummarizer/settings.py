@@ -63,15 +63,15 @@ ROOT_URLCONF = "YoutubeSummarizer.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -142,35 +142,37 @@ EMAIL_HOST_PASSWORD = "your_email_password"
 DEFAULT_FROM_EMAIL = "noreply@yourdomain.com"
 
 # Add this line to define the CHROMA_PERSIST_DIRECTORY
-CHROMA_PERSIST_DIRECTORY = os.path.join(BASE_DIR, 'chroma_db')
+CHROMA_PERSIST_DIRECTORY = os.path.join(BASE_DIR, "chroma_db")
 
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
-if not GROQ_API_KEY or GROQ_API_KEY == 'your_actual_groq_api_key_here':
-    raise ValueError("GROQ_API_KEY is not set correctly in the environment variables or .env file")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+if not GROQ_API_KEY or GROQ_API_KEY == "your_actual_groq_api_key_here":
+    raise ValueError(
+        "GROQ_API_KEY is not set correctly in the environment variables or .env file"
+    )
 
 print(f"GROQ_API_KEY in settings: {GROQ_API_KEY[:5]}...{GROQ_API_KEY[-5:]}")
 
 # Add these settings for authentication
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }

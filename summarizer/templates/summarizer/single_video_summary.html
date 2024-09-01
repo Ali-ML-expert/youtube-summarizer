@@ -1,33 +1,47 @@
 {% extends 'summarizer/base.html' %}
 
 {% block content %}
-<h2>Single Video Summary</h2>
+<div class="container mt-5">
+    <h2>Single Video Summary</h2>
 
-{% if error %}
-    <p class="error">{{ error }}</p>
-{% endif %}
-
-{% if not summary %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Summarize</button>
-    </form>
-{% else %}
-    <h3>{{ video.title }}</h3>
-    {% if video.thumbnail %}
-        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="video-thumbnail">
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
-    <h4>Short Description:</h4>
-    <p>{{ summary.short_description }}</p>
-    <h4>Key Points:</h4>
-    <ul>
-    {% for point in summary.key_points %}
-        <li>{{ point }}</li>
-    {% endfor %}
-    </ul>
-    <h4>Full Summary:</h4>
-    <p>{{ summary.full_summary }}</p>
-    <a href="{% url 'single_video_summary' %}">Summarize Another Video</a>
-{% endif %}
+
+    {% if not summary %}
+        <form method="post" id="summary-form" action="{% url 'single_video_summary' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Summarize</button>
+        </form>
+        <div id="summary-container"></div>
+    {% else %}
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    {% if video.thumbnail %}
+                        <img src="{{ video.thumbnail }}" class="card-img" alt="{{ video.title }}">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ video.title }}</h5>
+                        <h6>Short Description:</h6>
+                        <p class="card-text">{{ summary.short_description }}</p>
+                        <h6>Key Points:</h6>
+                        <ul>
+                            {% for point in summary.key_points %}
+                                <li>{{ point }}</li>
+                            {% endfor %}
+                        </ul>
+                        <h6>Full Summary:</h6>
+                        <p class="card-text">{{ summary.full_summary }}</p>
+                        <a href="{{ video.url }}" target="_blank" class="btn btn-primary">Watch Video</a>
+                        <a href="{% url 'single_video_summary' %}" class="btn btn-secondary">Summarize Another Video</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

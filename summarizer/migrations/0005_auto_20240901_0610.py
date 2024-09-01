@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summarizer', '0004_auto_20240829_1802'),
+        ("summarizer", "0004_auto_20240829_1802"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='videosummary',
-            name='thumbnail',
+            model_name="videosummary",
+            name="thumbnail",
         ),
         migrations.AlterField(
-            model_name='videosummary',
-            name='video_title',
+            model_name="videosummary",
+            name="video_title",
             field=models.CharField(max_length=200),
         ),
     ]

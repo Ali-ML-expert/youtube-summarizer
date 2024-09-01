@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summarizer', '0006_videosummary_thumbnail_url'),
+        ("summarizer", "0006_videosummary_thumbnail_url"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='videosummary',
-            name='short_description',
-            field=models.TextField(default='No short description available.'),
+            model_name="videosummary",
+            name="short_description",
+            field=models.TextField(default="No short description available."),
         ),
     ]
