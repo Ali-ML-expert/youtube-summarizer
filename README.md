@@ -37,7 +37,7 @@ The search results page displays:
 
 ### Individual Video Summary
 
-![Individual Video Summary](screenshots/individual_summary.png)
+![Individual Video Summary](screenshots/video_summarization.png)
 
 The individual video summary page shows:
 
