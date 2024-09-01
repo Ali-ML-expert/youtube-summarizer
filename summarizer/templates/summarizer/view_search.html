@@ -20,8 +20,6 @@
                             <h5 class="card-title">{{ summary.video_title }}</h5>
                             <h6>Short Description:</h6>
                             <p class="card-text">{{ summary.short_description }}</p>
-                            <h6>Full Description:</h6>
-                            <p class="card-text">{{ summary.full_description }}</p>
                             <h6>Key Points:</h6>
                             <ul>
                                 {% for point in summary.key_points %}
@@ -29,7 +27,8 @@
                                 {% endfor %}
                             </ul>
                             <h6>Full Summary:</h6>
-                            <p class="card-text">{{ summary.summary }}</p>
+                            <p class="card-text full-summary" style="display: none;">{{ summary.summary }}</p>
+                            <button class="btn btn-secondary toggle-summary">Show Full Summary</button>
                             <a href="{{ summary.video_url }}" target="_blank" class="btn btn-primary">Watch Video</a>
                         </div>
                     </div>
@@ -40,4 +39,23 @@
         <p>No videos found.</p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-summary').forEach(button => {
+        button.addEventListener('click', function() {
+            const fullSummary = this.previousElementSibling;
+            if (fullSummary.style.display === 'none') {
+                fullSummary.style.display = 'block';
+                this.textContent = 'Hide Full Summary';
+            } else {
+                fullSummary.style.display = 'none';
+                this.textContent = 'Show Full Summary';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

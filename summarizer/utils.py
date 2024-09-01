@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote_plus, urlparse, parse_qs, urlencode
-from langchain_groq import ChatGroq
-from langchain_core.messages import HumanMessage
 from django.conf import settings
 import logging
 from selenium import webdriver
@@ -10,11 +8,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from langchain_groq import ChatGroq
+from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+from langchain_core.prompts import PromptTemplate
 
 logger = logging.getLogger(__name__)
-
-def get_chat_model():
-    return ChatGroq(groq_api_key=settings.GROQ_API_KEY, model_name="mixtral-8x7b-32768")
 
 def clean_video_url(url):
     parsed_url = urlparse(url)
@@ -97,50 +95,15 @@ def get_video_info(video_url):
     }
 
 
-def generate_summary_with_groq(prompt, preferred_language, summary_length):
-    chat_model = get_chat_model()
-    messages = [HumanMessage(content=prompt)]
-    response = chat_model.invoke(messages)
-    logger.debug(f"Groq API response: {response.content}")
-    summary = parse_summary(response.content)
-    logger.debug(f"Parsed summary: {summary}")
-    return summary
-
-
-def parse_summary(content):
-    logger.debug(f"Parsing summary content: {content}")
-    lines = content.split("\n")
-    summary = {"short_description": "", "key_points": [], "full_summary": ""}
-
-    current_section = None
-    for line in lines:
-        if line.startswith("Short Description:"):
-            current_section = "short_description"
-            summary["short_description"] = line.replace(
-                "Short Description:", ""
-            ).strip()
-        elif line.startswith("Key Points:"):
-            current_section = "key_points"
-        elif line.startswith("Full Summary:"):
-            current_section = "full_summary"
-        elif current_section == "key_points" and line.strip().startswith("-"):
-            summary["key_points"].append(line.strip()[1:].strip())
-        elif current_section == "full_summary":
-            summary["full_summary"] += line + "\n"
-
-    summary["full_summary"] = summary["full_summary"].strip()
-    logger.debug(f"Parsed summary: {summary}")
-    logger.info(f"parts: {summary}")
-    return summary
-
-
 def generate_summary(text):
     prompt = f"""
-    Please provide a comprehensive summary of the following text. The summary should include:
+    You are a helpful assistant that provides a comprehensive summary of YouTube videos. The summary should include:
 
     1. A short description (1-2 sentences) labeled as "Short Description:"
     2. Key points or main ideas (3-5 bullet points) labeled as "Key Points:"
     3. A full summary (3-5 paragraphs) labeled as "Full Summary:"
+
+    Ensure that each section is filled out and not left empty. If there is no information available for a section, explicitly state "No information available."
 
     Text to summarize:
     {text}
@@ -159,7 +122,39 @@ def generate_summary(text):
     """
 
     logger.debug(f"Generating summary with prompt: {prompt}")
-    return generate_summary_with_groq(prompt, "English", "medium")
+    return generate_summary_with_groq(prompt)
+
+
+def parse_summary(content):
+    logger.debug(f"Parsing summary content: {content}")
+    lines = content.split("\n")
+    summary = {"short_description": "", "key_points": [], "full_summary": ""}
+
+    current_section = None
+    for line in lines:
+        if line.startswith("Short Description:"):
+            current_section = "short_description"
+            summary["short_description"] = line.replace("Short Description:", "").strip()
+        elif line.startswith("Key Points:"):
+            current_section = "key_points"
+        elif line.startswith("Full Summary:"):
+            current_section = "full_summary"
+        elif current_section == "key_points" and line.strip().startswith("-"):
+            summary["key_points"].append(line.strip()[1:].strip())
+        elif current_section == "full_summary":
+            summary["full_summary"] += line + "\n"
+
+    summary["full_summary"] = summary["full_summary"].strip()
+    logger.debug(f"Parsed summary: {summary}")
+    return summary
+
+
+def generate_summary_with_groq(prompt):
+    chat_model = get_chat_model()
+    messages = [{"role": "user", "content": prompt}]
+    response = chat_model.invoke(messages)
+    logger.debug(f"Groq API response: {response.content}")
+    return parse_summary(response.content)
 
 
 def summarize_search_results(query):
@@ -176,3 +171,6 @@ def summarize_search_results(query):
         summaries.append({"video": video_info, "summary": summary})
 
     return summaries
+
+def get_chat_model():
+    return ChatGroq(groq_api_key=settings.GROQ_API_KEY, model_name="mixtral-8x7b-32768")

@@ -35,7 +35,8 @@
                             {% endfor %}
                         </ul>
                         <h6>Full Summary:</h6>
-                        <p class="card-text">{{ summary.full_summary }}</p>
+                        <p class="card-text full-summary" style="display: none;">{{ summary.full_summary }}</p>
+                        <button class="btn btn-secondary toggle-summary">Show Full Summary</button>
                         <a href="{{ video.url }}" target="_blank" class="btn btn-primary">Watch Video</a>
                         <a href="{% url 'single_video_summary' %}" class="btn btn-secondary">Summarize Another Video</a>
                     </div>
@@ -44,4 +45,23 @@
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-summary').forEach(button => {
+        button.addEventListener('click', function() {
+            const fullSummary = this.previousElementSibling;
+            if (fullSummary.style.display === 'none') {
+                fullSummary.style.display = 'block';
+                this.textContent = 'Hide Full Summary';
+            } else {
+                fullSummary.style.display = 'none';
+                this.textContent = 'Show Full Summary';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

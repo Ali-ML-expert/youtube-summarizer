@@ -65,7 +65,6 @@ def single_video_summary(request):
                     video_title=video_info["title"],
                     summary=summary['full_summary'],
                     short_description=summary['short_description'],
-                    full_description=video_info['description'],  # Save full description
                     thumbnail_url=video_info.get("thumbnail"),
                     key_points=summary['key_points']
                 )
@@ -103,7 +102,6 @@ def search(request):
                     video_title=video_info["title"],
                     summary=summary_data['full_summary'],
                     short_description=summary_data['short_description'],
-                    full_description=video_info['description'],  # Save full description
                     thumbnail_url=video_info.get("thumbnail"),
                     key_points=summary_data['key_points']
                 )
@@ -126,7 +124,7 @@ def search_results(request, query):
         return render(request, 'summarizer/search_results.html', {'summaries': summaries, 'query': query})
     except Exception as e:
         logger.error(f"Error processing search query {query}: {str(e)}", exc_info=True)
-        return render(request, 'summarizer/search.html', {'form': SearchForm(), 'error': f"An error occurred: {str(e)}"})
+        return render(request, 'summarizer/search_results.html', {'summaries': [], 'query': query, 'error': str(e)})
 
 @login_required
 def history(request):

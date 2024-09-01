@@ -1,111 +1,137 @@
-# 🚀 YouTube AI Summary App
+# YouTube Summarizer 🎥📝
 
-## 📋 Description
+YouTube Summarizer is a web application that leverages AI to generate concise summaries of YouTube videos. It enables users to quickly grasp the content of videos without watching them in their entirety.
 
-The YouTube AI Summary App is a web application that allows users to summarize YouTube videos using AI. Users can search for videos, generate summaries, and view their summary history. The app is built with Django for the backend and React.js for the frontend, ensuring a responsive and user-friendly experience.
+## Features 🌟
 
-## 🛠️ Tech Stack
+- Summarize individual YouTube videos
+- Search for videos and get summaries of multiple results
+- User authentication and profile management
+- History tracking of summarized videos and searches
 
-- **Backend:** Django
-- **Frontend:** React.js, Bootstrap
-- **Database:** SQLite
-- **AI Integration:** Groq API
-- **Data Processing:** ChromaDB, LangChain
-- **Dependency Management:** Pipenv
+## Tech Stack 💻
 
-## 📂 File Description
+- Django
+- React.js
+- Python
+- JavaScript
+- HTML/CSS
+- Bootstrap
+- SQLite
+- Selenium WebDriver
 
-- **YoutubeSummarizer/**: Project root containing settings and configuration.
-- **summarizer/**: Main application with core functionality.
-- **templates/**: HTML templates for rendering views.
-- **static/**: CSS, JavaScript, and other static files.
-- **migrations/**: Database migration files.
-- **manage.py**: Django's command-line utility for administrative tasks.
-- **requirements.txt**: Python package dependencies.
-- **.env**: Environment variables (not tracked in git).
-- **.gitignore**: Specifies intentionally untracked files.
+## Output Screenshots 📸
 
-## 📝 Client Need
+### Search Results Page
 
-The client needs a web application that can summarize YouTube videos using AI. The app should allow users to search for videos, generate summaries, and view their summary history. The app should be responsive and user-friendly.
+![Search Results Page](screenshots/search_results.png)
 
-## 💡 Solution
+The search results page displays:
 
-The solution is a web application built with Django and React.js. The app integrates with the Groq API for AI summarization and uses ChromaDB and LangChain for data processing. The UI is designed with Bootstrap to ensure responsiveness and user-friendliness.
+- Thumbnails of videos
+- Video titles
+- Short descriptions
+- Key points
+- Options to show/hide full summaries
+- Links to watch the full videos
 
-## 🔧 Options and Recommendations
+### Individual Video Summary
 
-- **Frontend Framework:** React.js is recommended for its component-based architecture and ease of integration with Django.
-- **Styling:** Bootstrap is recommended for responsive design and pre-built components.
-- **AI Integration:** Groq API is recommended for its powerful summarization capabilities.
-- **Database:** SQLite is recommended for simplicity and ease of setup.
+![Individual Video Summary](screenshots/individual_summary.png)
 
-## 🚀 Install and Run
+The individual video summary page shows:
 
-1. **Clone the repository:**
+- Video thumbnail
+- Title
+- Short description
+- Key points
+- Full summary
+- Option to watch the video
 
-    ```bash
-    git clone https://github.com/yourusername/youtube-ai-summary-app.git
-    cd youtube-ai-summary-app
-    ```
+## Installation 🛠️
 
-2. **Set up the virtual environment:**
+1. Clone the repository:
 
-    ```bash
-    pipenv install
-    pipenv shell
-    ```
+   ```bash
+   git clone https://github.com/yourusername/youtube-summarizer.git
+   ```
 
-3. **Set up the environment variables:**
+2. Navigate to the project directory:
 
-    ```bash
-    cp .env.example .env
-    # Update .env with your configuration
-    ```
+   ```bash
+   cd youtube-summarizer
+   ```
 
-4. **Apply database migrations:**
+3. Create a virtual environment:
 
-    ```bash
-    python manage.py makemigrations summarizer
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
+   ```bash
+   python -m venv venv
+   ```
 
-5. **Run the tests:**
+4. Activate the virtual environment:
+   - On Windows:
 
-    ```bash
-    python manage.py test_groq_connection
-    ```
+     ```bash
+     venv\Scripts\activate
+     ```
 
-6. **Run the development server:**
+   - On macOS and Linux:
 
-    ```bash
-    python manage.py runserver
-    ```
+     ```bash
+     source venv/bin/activate
+     ```
 
-7. **Access the app in your browser:**
-    ```http://127.0.0.1:8000/```
+5. Install the required packages:
 
-## 📜 License
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+6. Set up the database:
 
-## 🤝 Contribution
+   ```bash
+   python manage.py migrate
+   ```
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+7. Create a superuser:
 
-## 🌟 Key Features
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-- **YouTube Scraping:** Scrape top results from YouTube for a given subject.
-- **AI Summarization:** Use Groq API to summarize YouTube videos.
-- **Responsive Design:** Ensure app is fully responsive across devices.
-- **User Authentication:** Implement secure login and registration system.
-- **Summary History:** View previously searched topics and summarized videos.
-- **User Profile:** Manage user information, settings, and preferences.
+## Usage 🚀
 
-## 📧 Contact
+1. Start the development server:
 
-For any inquiries, please contact [amani.ali.upwork@gmail.com](mailto:your_email@example.com).
+   ```bash
+   python manage.py runserver
+   ```
+
+2. Open a web browser and navigate to `http://localhost:8000`
+
+3. Log in or create an account
+
+4. Enter a YouTube video URL or search query to get summaries
+
+## Contributing 🤝
+
+We welcome contributions to the YouTube Summarizer project! Here's how you can contribute:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/AmazingFeature`)
+3. Make your changes
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
+
+## License 📄
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments 👏
+
+- Thanks to the Django and React.js communities for their excellent documentation and resources.
+- Special thanks to all contributors who have helped to improve this project.
 
 ---
 
