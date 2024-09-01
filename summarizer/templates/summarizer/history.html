@@ -3,18 +3,34 @@
 {% block title %}Summary History{% endblock %}
 
 {% block content %}
-<h2>Your Summary History</h2>
-{% if summaries %}
-    <ul>
-    {% for summary in summaries %}
-        <li>
-            <h3>{{ summary.video_title }}</h3>
-            <p>Summarized on: {{ summary.created_at }}</p>
-            <a href="{% url 'single_video_summary' %}?video_url={{ summary.video_url|urlencode }}">View Summary</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>You haven't summarized any videos yet.</p>
-{% endif %}
+<div class="container mt-5">
+    <h2>Your Summary History</h2>
+    {% if summaries %}
+        <ul>
+        {% for summary in summaries %}
+            <li>
+                <h3>{{ summary.video_title }}</h3>
+                <p>Summarized on: {{ summary.created_at }}</p>
+                <a href="{% url 'view_summary' summary.id %}">View Summary</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't summarized any videos yet.</p>
+    {% endif %}
+    <h2>Your Search History</h2>
+    {% if search_history %}
+        <ul>
+        {% for search in search_history %}
+            <li>
+                <h3>{{ search.query }}</h3>
+                <p>Searched on: {{ search.created_at }}</p>
+                <a href="{% url 'view_search' search.id %}">View Search</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't searched for any topics yet.</p>
+    {% endif %}
+</div>
 {% endblock %}

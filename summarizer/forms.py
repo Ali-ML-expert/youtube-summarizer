@@ -4,11 +4,17 @@ from django.contrib.auth.models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
 
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Username'})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm Password'})
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -52,7 +58,7 @@ class SingleVideoForm(forms.Form):
     video_url = forms.URLField(
         label="YouTube Video URL",
         max_length=200,
-        widget=forms.URLInput(attrs={"class": "form-control"}),
+        widget=forms.URLInput(attrs={"class": "form-control", "placeholder": "YouTube Video URL"}),
     )
 
 
@@ -60,7 +66,7 @@ from .models import UserProfile
 
 
 class UserProfileForm(forms.ModelForm):
-    email = forms.EmailField()
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
 
     class Meta:
         model = UserProfile
@@ -69,6 +75,9 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields["email"].initial = self.instance.user.email
+        self.fields['bio'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Bio'})
+        self.fields['preferred_language'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Preferred Language'})
+        self.fields['summary_length'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Summary Length'})
 
     def save(self, commit=True):
         user_profile = super(UserProfileForm, self).save(commit=False)

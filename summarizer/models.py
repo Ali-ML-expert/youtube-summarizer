@@ -12,7 +12,9 @@ class VideoSummary(models.Model):
     video_title = models.CharField(max_length=200)
     summary = models.TextField()
     short_description = models.TextField(default="No short description available.")
+    full_description = models.TextField(default="No full description available.")  # New field for full description
     thumbnail_url = models.URLField(blank=True, null=True)  # New field for thumbnail
+    key_points = models.JSONField(default=list)  # New field for key points
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -26,6 +28,7 @@ class SearchHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     query = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    video_summaries = models.ManyToManyField(VideoSummary)  # Link to VideoSummary
 
     def __str__(self):
         return f"{self.user.username} - {self.query}"

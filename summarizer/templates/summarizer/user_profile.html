@@ -3,20 +3,43 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
-<h2>User Profile</h2>
-<p>Username: {{ user.username }}</p>
-<p>Email: {{ user.email }}</p>
-<h3>Recent Summaries</h3>
-<ul>
-{% for summary in recent_summaries %}
-    <li>
-        <a href="{% url 'single_video_summary' %}?video_url={{ summary.video_url|urlencode }}">
-            {{ summary.video_title }}
-        </a>
-        ({{ summary.created_at|date:"F d, Y" }})
-    </li>
-{% empty %}
-    <li>No recent summaries</li>
-{% endfor %}
-</ul>
+<div class="container mt-5">
+    <h2>User Profile</h2>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <h3>Recent Summaries</h3>
+    <ul>
+    {% if recent_summaries %}
+        {% for summary in recent_summaries %}
+            <li>
+                <a href="{% url 'view_summary' summary.id %}">
+                    {{ summary.video_title }}
+                </a>
+                ({{ summary.created_at|date:"F d, Y" }})
+            </li>
+        {% empty %}
+            <li>No recent summaries</li>
+        {% endfor %}
+    {% else %}
+        <li>No recent summaries</li>
+    {% endif %}
+    </ul>
+    <h3>Recent Searches</h3>
+    <ul>
+    {% if recent_searches %}
+        {% for search in recent_searches %}
+            <li>
+                <a href="{% url 'view_search' search.id %}">
+                    {{ search.query }}
+                </a>
+                ({{ search.created_at|date:"F d, Y" }})
+            </li>
+        {% empty %}
+            <li>No recent searches</li>
+        {% endfor %}
+    {% else %}
+        <li>No recent searches</li>
+    {% endif %}
+    </ul>
+</div>
 {% endblock %}

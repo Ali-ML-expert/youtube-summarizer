@@ -66,6 +66,7 @@ The solution is a web application built with Django and React.js. The app integr
 4. **Apply database migrations:**
 
     ```bash
+    python manage.py makemigrations summarizer
     python manage.py makemigrations
     python manage.py migrate
     ```

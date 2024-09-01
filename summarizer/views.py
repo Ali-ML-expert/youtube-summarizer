@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import SingleVideoForm, SearchForm
+from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from .forms import SingleVideoForm, SearchForm, CustomUserCreationForm, CustomAuthenticationForm
 from .utils import get_video_info, generate_summary, summarize_search_results
-from .models import VideoSummary
+from .models import VideoSummary, SearchHistory, UserProfile
 from .chroma_utils import store_video_data
 import logging
 from django.http import JsonResponse
@@ -11,6 +12,38 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     return render(request, 'summarizer/home.html')
+
+def register(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect('home')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'summarizer/register.html', {'form': form})
+
+def login(request):
+    if request.method == "POST":
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                # Ensure UserProfile is created
+                if not hasattr(user, 'userprofile'):
+                    UserProfile.objects.create(user=user)
+                return redirect('home')
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'summarizer/login.html', {'form': form})
+
+def logout(request):
+    auth_logout(request)
+    return redirect('home')
 
 @login_required
 def single_video_summary(request):
@@ -31,7 +64,10 @@ def single_video_summary(request):
                     video_url=video_url,
                     video_title=video_info["title"],
                     summary=summary['full_summary'],
-                    short_description=summary['short_description']
+                    short_description=summary['short_description'],
+                    full_description=video_info['description'],  # Save full description
+                    thumbnail_url=video_info.get("thumbnail"),
+                    key_points=summary['key_points']
                 )
 
                 store_video_data(video_summary)
@@ -55,6 +91,23 @@ def search(request):
         if form.is_valid():
             query = form.cleaned_data["query"]
             logger.info(f"Search query: {query}")
+            # Save search query to the database
+            search_history = SearchHistory.objects.create(user=request.user, query=query)
+            summaries = summarize_search_results(query)
+            for summary in summaries[:5]:  # Save only the top 5 summaries
+                video_info = summary['video']
+                summary_data = summary['summary']
+                video_summary = VideoSummary.objects.create(
+                    user=request.user,
+                    video_url=video_info["url"],
+                    video_title=video_info["title"],
+                    summary=summary_data['full_summary'],
+                    short_description=summary_data['short_description'],
+                    full_description=video_info['description'],  # Save full description
+                    thumbnail_url=video_info.get("thumbnail"),
+                    key_points=summary_data['key_points']
+                )
+                search_history.video_summaries.add(video_summary)
             return redirect('search_results', query=query)
         else:
             logger.error(f"Form errors: {form.errors}")
@@ -78,8 +131,22 @@ def search_results(request, query):
 @login_required
 def history(request):
     summaries = VideoSummary.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'summarizer/history.html', {'summaries': summaries})
+    search_history = SearchHistory.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'summarizer/history.html', {'summaries': summaries, 'search_history': search_history})
 
 @login_required
 def user_profile(request):
-    return render(request, 'summarizer/user_profile.html')
+    recent_summaries = VideoSummary.objects.filter(user=request.user).order_by('-created_at')[:5]
+    recent_searches = SearchHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
+    return render(request, 'summarizer/user_profile.html', {'recent_summaries': recent_summaries, 'recent_searches': recent_searches})
+
+@login_required
+def view_summary(request, summary_id):
+    summary = get_object_or_404(VideoSummary, id=summary_id, user=request.user)
+    return render(request, 'summarizer/view_summary.html', {'summary': summary})
+
+@login_required
+def view_search(request, search_id):
+    search = get_object_or_404(SearchHistory, id=search_id, user=request.user)
+    summaries = search.video_summaries.all()
+    return render(request, 'summarizer/view_search.html', {'search': search, 'summaries': summaries})
